@@ -58,8 +58,6 @@ public class ConversationConductor {
     }
 
     private String fabricateUniqueIdentifier() {
-        long timestamp = System.nanoTime();
-        int randomSegment = (int) (Math.random() * 1000000);
-        return Long.toHexString(timestamp) + "-" + Integer.toHexString(randomSegment);
+        return UUID.randomUUID().toString().substring(0, 13);
     }
 }

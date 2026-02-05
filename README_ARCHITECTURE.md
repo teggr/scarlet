@@ -17,7 +17,7 @@ A Spring Boot application integrating with Telegram using hexagonal architecture
 
 ### Adapter Layer
 - **chronicle**: Storage adapters
-  - `HexagonalCoordinateVault`: In-memory storage using hexagonal coordinate system
+  - `SimpleMemoryVault`: In-memory storage using HashMap and chronological list
 
 - **telegraph**: Telegram adapters
   - `TelegramWireReceiver`: Receives messages from Telegram
@@ -30,7 +30,7 @@ A Spring Boot application integrating with Telegram using hexagonal architecture
 
 1. **Framework-Independent Domain**: Core business logic has no Spring/Telegram dependencies
 2. **Unique Naming**: Avoids common patterns (Message, Repository, Service, Controller)
-3. **Hexagonal Coordinate Storage**: Custom algorithm using hexagonal grid positioning
+3. **Simple In-Memory Storage**: Efficient HashMap-based storage with chronological ordering
 4. **Dual-Purpose Telegram Integration**: Both receiving and sending capabilities
 5. **Web UI**: Simple interface for viewing and sending messages
 
@@ -81,7 +81,7 @@ Features:
 - View all archived utterances
 - See real-time statistics
 - Send messages to Telegram chats
-- Auto-refresh every 11 seconds
+- Auto-refresh every 10 seconds
 
 ### Telegram Bot
 1. Start a chat with your bot on Telegram
@@ -118,13 +118,13 @@ Adapters → Domain Ports → Domain Core
 
 The domain never depends on adapters or frameworks.
 
-## Storage Algorithm
+## Storage Implementation
 
-The `HexagonalCoordinateVault` uses a custom hexagonal coordinate system:
-- Maps each utterance to hex coordinates (q, r, s) based on token hash
-- Uses cube coordinates where q + r + s = 0
-- Dynamically expands ring radius as data grows
-- Maintains chronological order via separate token list
+The `SimpleMemoryVault` provides efficient in-memory storage:
+- Uses HashMap for O(1) lookups by ephemeralToken
+- Maintains ArrayList to preserve chronological insertion order
+- Thread-safe with synchronized methods
+- Suitable for development and low-volume production use
 
 ## Testing
 
@@ -152,7 +152,7 @@ src/main/java/io/teggr/scarlet/
 
 To add a new storage adapter:
 1. Implement `UtteranceChronicle` interface
-2. Update Spring configuration to use new implementation
+2. Update `ScarletNexusApplication` to return your new implementation in the `utteranceChronicle()` bean method
 
 To add a new messaging adapter:
 1. Implement `TelegraphicDispatcher` interface

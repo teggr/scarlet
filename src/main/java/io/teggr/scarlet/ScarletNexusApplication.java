@@ -33,9 +33,13 @@ public class ScarletNexusApplication {
     }
 
     @Bean
-    public TelegraphicDispatcher telegraphicDispatcher() throws TelegramApiException {
+    public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
+        return new TelegramBotsApi(DefaultBotSession.class);
+    }
+
+    @Bean
+    public TelegraphicDispatcher telegraphicDispatcher(TelegramBotsApi botsApi) throws TelegramApiException {
         TelegramWireTransmitter transmitter = new TelegramWireTransmitter(telegramBotUsername, telegramBotToken);
-        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         botsApi.registerBot(transmitter);
         return transmitter;
     }
@@ -47,9 +51,9 @@ public class ScarletNexusApplication {
     }
 
     @Bean
-    public TelegramWireReceiver telegramWireReceiver(ConversationConductor conductor) throws TelegramApiException {
+    public TelegramWireReceiver telegramWireReceiver(ConversationConductor conductor, 
+                                                      TelegramBotsApi botsApi) throws TelegramApiException {
         TelegramWireReceiver receiver = new TelegramWireReceiver(telegramBotUsername, telegramBotToken, conductor);
-        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         botsApi.registerBot(receiver);
         return receiver;
     }
