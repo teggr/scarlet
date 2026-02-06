@@ -26,7 +26,7 @@
     </parent>
 
     <properties>
-        <java.version>25</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <telegrambots.version>6.9.7.1</telegrambots.version>
     </properties>
