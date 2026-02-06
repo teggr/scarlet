@@ -1,11 +1,12 @@
 package dev.rebelcraft.scarlet.telegram;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Stores the conversation history for a single chat.
+ * Thread-safe for concurrent message additions.
  */
 public class ChatHistory {
     
@@ -15,7 +16,7 @@ public class ChatHistory {
     
     public ChatHistory(Long chatId) {
         this.chatId = chatId;
-        this.messages = new ArrayList<>();
+        this.messages = new CopyOnWriteArrayList<>();
         this.chatTitle = "Chat " + chatId;
     }
     

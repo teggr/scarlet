@@ -3,6 +3,7 @@ package dev.rebelcraft.scarlet.web;
 import dev.rebelcraft.scarlet.telegram.ChatHistory;
 import dev.rebelcraft.scarlet.telegram.ChatManager;
 import dev.rebelcraft.scarlet.telegram.ChatMessage;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,13 +28,20 @@ public class ConversationController {
     }
 
     @GetMapping("/{chatId}")
-    public ChatHistory getConversation(@PathVariable Long chatId) {
-        return chatManager.getChatHistory(chatId);
+    public ResponseEntity<ChatHistory> getConversation(@PathVariable Long chatId) {
+        ChatHistory history = chatManager.getChatHistory(chatId);
+        if (history == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(history);
     }
 
     @GetMapping("/{chatId}/messages")
-    public List<ChatMessage> getConversationMessages(@PathVariable Long chatId) {
+    public ResponseEntity<List<ChatMessage>> getConversationMessages(@PathVariable Long chatId) {
         ChatHistory history = chatManager.getChatHistory(chatId);
-        return history != null ? history.getMessages() : List.of();
+        if (history == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(history.getMessages());
     }
 }
