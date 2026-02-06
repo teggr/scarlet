@@ -1,5 +1,7 @@
 package dev.rebelcraft.scarlet;
 
+import dev.rebelcraft.scarlet.telegram.ChatManager;
+import dev.rebelcraft.scarlet.telegram.ChatMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +21,12 @@ public class TelegramConfiguration {
   public String BOT_TOKEN;
 
   @Bean
-  public LongPollingUpdateConsumer telegramBot() {
+  public ChatManager chatManager() {
+    return new ChatManager();
+  }
+
+  @Bean
+  public LongPollingUpdateConsumer telegramBot(ChatManager chatManager) {
     return new LongPollingSingleThreadUpdateConsumer() {
 
       private TelegramClient telegramClient = new OkHttpTelegramClient(BOT_TOKEN);
@@ -33,14 +40,23 @@ public class TelegramConfiguration {
         if (update.hasMessage() && update.getMessage().hasText()) {
           System.out.println("Received update: " + update.getMessage().getText());
 
+          Long chatId = update.getMessage().getChatId();
+          String messageText = update.getMessage().getText();
+          String senderName = update.getMessage().getFrom().getFirstName();
 
+          // Add incoming message to chat history
+          ChatMessage incomingMessage = new ChatMessage(chatId, messageText, true, senderName);
+          chatManager.addMessage(incomingMessage);
 
           // Create your send message object
-          SendMessage sendMessage = new SendMessage(String.valueOf(update.getMessage().getChatId()),
-            update.getMessage().getText());
+          SendMessage sendMessage = new SendMessage(String.valueOf(chatId), messageText);
           try {
             // Execute it
             telegramClient.execute(sendMessage);
+            
+            // Add sent message to chat history
+            ChatMessage outgoingMessage = new ChatMessage(chatId, messageText, false, "Bot");
+            chatManager.addMessage(outgoingMessage);
           } catch (TelegramApiException e) {
             e.printStackTrace();
           }
