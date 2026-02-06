@@ -25,13 +25,19 @@ h1{color:#ff6b9d;border-bottom:2px solid #ff6b9d;padding-bottom:10px}
 <h1>SCARLET PORTAL - Conversation</h1>
 <div class="nav">
   <a href="/">Home</a>
-  <a href="/conversations">Conversations</a>
+  <a href="conversations.html">Conversations</a>
 </div>
 <div id="info" class="info"></div>
 <div id="messages" class="messages"></div>
 <script>
-const chatId=window.location.pathname.split('/').pop();
+const urlParams = new URLSearchParams(window.location.search);
+const chatId = urlParams.get('chatId');
+console.log('Chat ID from URL:', chatId);
 function loadConversation(){
+  if(!chatId){
+    document.getElementById('messages').innerHTML='<div class="empty">No chat ID specified</div>';
+    return;
+  }
   fetch(`/api/conversations/${chatId}`)
     .then(r=>r.json())
     .then(conv=>{

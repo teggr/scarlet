@@ -3,6 +3,7 @@ package dev.rebelcraft.scarlet;
 import dev.rebelcraft.scarlet.telegram.ChatManager;
 import dev.rebelcraft.scarlet.telegram.ChatMessage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -17,7 +18,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Configuration
 public class TelegramConfiguration {
 
-  @Value("${TELEGRAM_BOT_TOKEN}")
+  @Value("${TELEGRAM_BOT_TOKEN:}")
   public String BOT_TOKEN;
 
   @Bean
@@ -26,6 +27,7 @@ public class TelegramConfiguration {
   }
 
   @Bean
+  @ConditionalOnProperty(name = "TELEGRAM_BOT_TOKEN")
   public LongPollingUpdateConsumer telegramBot(ChatManager chatManager) {
     return new LongPollingSingleThreadUpdateConsumer() {
 
@@ -69,6 +71,7 @@ public class TelegramConfiguration {
   }
 
   @Bean
+  @ConditionalOnProperty(name = "TELEGRAM_BOT_TOKEN")
   public TelegramBotsLongPollingApplication telegramBotsLongPollingApplication(LongPollingUpdateConsumer telegramBot) throws TelegramApiException {
     TelegramBotsLongPollingApplication longPollingApplication = new TelegramBotsLongPollingApplication();
     longPollingApplication.registerBot(BOT_TOKEN, telegramBot);

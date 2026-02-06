@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ScarletApplication {
 
-
-     static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(ScarletApplication.class, args);
     }
 

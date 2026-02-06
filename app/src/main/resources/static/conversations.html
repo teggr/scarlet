@@ -21,7 +21,7 @@ h1{color:#ff6b9d;border-bottom:2px solid #ff6b9d;padding-bottom:10px}
 <h1>SCARLET PORTAL - Conversations</h1>
 <div class="nav">
   <a href="/">Home</a>
-  <a href="/conversations">Conversations</a>
+  <a href="conversations.html">Conversations</a>
 </div>
 <div id="conversations"></div>
 <script>
@@ -51,7 +51,7 @@ function loadConversations(){
     });
 }
 function viewConversation(chatId){
-  window.location.href=`/conversations/${chatId}`;
+  window.location.href=`conversation.html?chatId=${chatId}`;
 }
 function esc(s){
   if(!s) return '';
