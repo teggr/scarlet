@@ -1,4 +1,4 @@
-package dev.rebelcraft.scarlet.telegram;
+package dev.rebelcraft.telegram;
 
 import java.util.Collection;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class ChatManager {
      */
     public void addMessage(ChatMessage message) {
         ChatHistory history = chatHistories.computeIfAbsent(
-            message.getChatId(), 
+            message.chatId(),
             ChatHistory::new
         );
         history.addMessage(message);

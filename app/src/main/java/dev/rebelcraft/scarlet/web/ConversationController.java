@@ -1,8 +1,8 @@
 package dev.rebelcraft.scarlet.web;
 
-import dev.rebelcraft.scarlet.telegram.ChatHistory;
-import dev.rebelcraft.scarlet.telegram.ChatManager;
-import dev.rebelcraft.scarlet.telegram.ChatMessage;
+import dev.rebelcraft.telegram.ChatHistory;
+import dev.rebelcraft.telegram.ChatManager;
+import dev.rebelcraft.telegram.ChatMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,4 +1,4 @@
-package dev.rebelcraft.scarlet.telegram;
+package dev.rebelcraft.telegram;
 
 import java.util.Collections;
 import java.util.List;
