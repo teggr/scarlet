@@ -49,7 +49,6 @@ public class ConversationPage implements View {
                 script(rawHtml("""
                     const urlParams = new URLSearchParams(window.location.search);
                     const chatId = urlParams.get('chatId');
-                    console.log('Chat ID from URL:', chatId);
                     function loadConversation(){
                       if(!chatId){
                         document.getElementById('messages').innerHTML='<div class="empty">No chat ID specified</div>';

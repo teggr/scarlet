@@ -19,19 +19,19 @@ public class TelegramConfiguration {
   public String telegramBotToken;
 
   @Bean(initMethod = "start", destroyMethod = "stop")
-  @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true", matchIfMissing = false)
+  @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
   public TelegramListenerContainer telegramListenerContainer( List<TelegramListener> telegramListeners ) {
     return new TelegramListenerContainer(telegramBotToken, telegramListeners );
   }
 
   @Bean
-  @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true", matchIfMissing = false)
+  @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
   public TelegramTemplate telegramTemplate() {
     return new TelegramTemplate(telegramBotToken);
   }
 
   @Bean
-  @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true", matchIfMissing = false)
+  @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
   public TelegramListener telegramListener( TelegramTemplate telegramTemplate ) {
     return update -> {
 
