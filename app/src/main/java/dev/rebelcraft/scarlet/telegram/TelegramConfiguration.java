@@ -1,14 +1,14 @@
 package dev.rebelcraft.scarlet.telegram;
 
-import dev.rebelcraft.telegram.ChatManager;
-import dev.rebelcraft.telegram.TelegramListener;
-import dev.rebelcraft.telegram.TelegramListenerContainer;
-import dev.rebelcraft.telegram.TelegramTemplate;
+import dev.rebelcraft.scarlet.chat.ChatHistoryProvider;
+import dev.rebelcraft.telegram.*;
+import dev.rebelcraft.telegram.store.InMemoryTelegramMessageStore;
+import dev.rebelcraft.telegram.store.StoreTelegramOperations;
+import dev.rebelcraft.telegram.store.StoreUpdatesListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
@@ -20,20 +20,25 @@ public class TelegramConfiguration {
 
   @Bean(initMethod = "start", destroyMethod = "stop")
   @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
-  public TelegramListenerContainer telegramListenerContainer( List<TelegramListener> telegramListeners ) {
-    return new TelegramListenerContainer(telegramBotToken, telegramListeners );
+  public TelegramListenerContainer telegramListenerContainer(List<TelegramListener> telegramListeners) {
+    return new TelegramListenerContainer(telegramBotToken, telegramListeners);
   }
 
   @Bean
   @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
-  public TelegramTemplate telegramTemplate() {
-    return new TelegramTemplate(telegramBotToken);
+  public TelegramOperations telegramTemplate(TelegramMessageStore telegramMessageStore) {
+    return new StoreTelegramOperations(new TelegramTemplate(telegramBotToken), telegramMessageStore);
+  }
+
+  @Bean
+  public TelegramMessageStore telegramMessageStore() {
+    return new InMemoryTelegramMessageStore();
   }
 
   @Bean
   @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
-  public TelegramListener telegramListener( TelegramTemplate telegramTemplate ) {
-    return update -> {
+  public TelegramListener telegramListener(TelegramOperations telegramOperations, TelegramMessageStore telegramMessageStore) {
+    TelegramListener telegramListener = update -> {
 
       Long chatId = update.getMessage().getChatId();
       String messageText = update.getMessage().getText();
@@ -41,14 +46,15 @@ public class TelegramConfiguration {
 
       System.out.println("Received message from " + senderName + " in chat " + chatId + ": " + messageText);
 
-      telegramTemplate.sendResponse( chatId, "Thinking about:" + messageText );
+      telegramOperations.sendResponse(chatId, "Thinking about:" + messageText);
 
     };
+    return new StoreUpdatesListener(telegramListener, telegramMessageStore);
   }
 
   @Bean
-  public ChatManager chatManager() {
-    return new ChatManager();
+  public ChatHistoryProvider telegramChatHistoryProvider(TelegramMessageStore telegramMessageStore) {
+    return new TelegramChatHistoryProvider(telegramMessageStore);
   }
 
 }

@@ -1,4 +1,4 @@
-package dev.rebelcraft.telegram;
+package dev.rebelcraft.scarlet.chat;
 
 import java.time.Instant;
 

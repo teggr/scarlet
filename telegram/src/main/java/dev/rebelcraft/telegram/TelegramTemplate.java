@@ -24,9 +24,6 @@ public class TelegramTemplate implements TelegramOperations {
       // Execute it
       telegramClient.execute(sendMessage);
 
-      // Add sent message to chat history
-      ChatMessage outgoingMessage = new ChatMessage(chatId, message, Instant.now(), false, "Bot");
-      // chatManager.addMessage(outgoingMessage);
     } catch (TelegramApiException e) {
       e.printStackTrace();
     }

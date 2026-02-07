@@ -1,5 +1,7 @@
 package dev.rebelcraft.telegram;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -11,9 +13,12 @@ import java.util.List;
 
 public class TelegramListenerContainer {
 
+  private static final Logger log = LoggerFactory.getLogger(TelegramListenerContainer.class);
+
   private boolean isRunning = false;
   private final String botToken;
   private final List<TelegramListener> listeners;
+    private TelegramBotsLongPollingApplication longPollingApplication;
 
   public TelegramListenerContainer(String botToken, List<TelegramListener> listeners ) {
     this.botToken = botToken;
@@ -21,6 +26,8 @@ public class TelegramListenerContainer {
   }
 
   public void start() throws TelegramApiException {
+
+    log.info("Starting TelegramListenerContainer");
 
     LongPollingUpdateConsumer consumer = new LongPollingSingleThreadUpdateConsumer() {
 
@@ -39,26 +46,31 @@ public class TelegramListenerContainer {
 
           listeners.forEach( l -> l.onUpdate(update) );
 
-          // Add incoming message to chat history
-          ChatMessage incomingMessage = new ChatMessage(chatId, messageText, Instant.now(), true, senderName);
-          // chatManager.addMessage(incomingMessage);
-
         }
 
       }
 
     };
 
-    TelegramBotsLongPollingApplication longPollingApplication = new TelegramBotsLongPollingApplication();
+    longPollingApplication = new TelegramBotsLongPollingApplication();
     longPollingApplication.registerBot(botToken, consumer);
-    System.out.println("Telegram bot registered successfully.");
+
+    log.info("Started TelegramListenerContainer");
 
     isRunning = true;
   }
 
-  public void stop() {
+  public void stop() throws TelegramApiException {
 
+    log.info("Stopping TelegramListenerContainer");
+
+    if( longPollingApplication != null ) {
+      longPollingApplication.stop();
+    }
     isRunning = false;
+
+    log.info("Stopped TelegramListenerContainer");
+
   }
 
   public boolean isRunning() {
