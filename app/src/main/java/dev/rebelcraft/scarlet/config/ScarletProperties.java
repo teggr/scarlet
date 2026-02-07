@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Configuration properties for the Scarlet application.
