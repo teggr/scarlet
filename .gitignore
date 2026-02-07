@@ -41,3 +41,6 @@ buildNumber.properties
 .classpath
 .project
 .settings/
+
+# Example repositories
+github/example-repositories/
